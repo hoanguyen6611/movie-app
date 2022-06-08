@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import MovieCard from "../components/movie/MovieCard";
-import { api_key, fetcher, tmdbAPI } from "../config";
+import {fetcher, tmdbAPI } from "../config";
 import useDebounce from "../hooks/useDebounce";
 import ReactPaginate from "react-paginate";
 
@@ -11,7 +11,7 @@ const MoviePage = () => {
   const [itemOffset, setItemOffset] = useState(0);
   const [filter, setFilter] = useState("");
   const [nextPage, setNextPage] = useState(1);
-  const [url, setUrl] = useState(tmdbAPI.getMoviePopular(nextPage));
+  const [url, setUrl] = useState(tmdbAPI.getMovieList("popular", nextPage));
   const filterDebounce = useDebounce(filter, 500);
   const handleFilterChange = (e) => {
     setFilter(e.target.value);
@@ -20,9 +20,9 @@ const MoviePage = () => {
   const loading = !data && !error;
   useEffect(() => {
     if (filterDebounce) {
-      setUrl(tmdbAPI.search(filterDebounce, nextPage));
+      setUrl(tmdbAPI.getMovieSearch(filterDebounce, nextPage));
     } else {
-      setUrl(tmdbAPI.getMoviePopular(nextPage));
+      setUrl(tmdbAPI.getMovieList("popular", nextPage));
     }
   }, [filterDebounce, nextPage]);
   const movies = data?.results || [];
