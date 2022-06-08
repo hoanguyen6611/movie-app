@@ -3,9 +3,12 @@ import useSWR from "swr";
 import MovieCard from "../components/movie/MovieCard";
 import { api_key, fetcher } from "../config";
 import useDebounce from "../hooks/useDebounce";
+import ReactPaginate from "react-paginate";
 
-const pageCount = 5;
+const itemsPerPage = 20;
 const MoviePage = () => {
+  const [pageCount, setPageCount] = useState(0);
+  const [itemOffset, setItemOffset] = useState(0);
   const [filter, setFilter] = useState("");
   const [nextPage, setNextPage] = useState(1);
   const [url, setUrl] = useState(
@@ -16,7 +19,6 @@ const MoviePage = () => {
     setFilter(e.target.value);
   };
   const { data, error } = useSWR(url, fetcher);
-  console.log("🚀 ~ file: MoviePage.js ~ line 17 ~ MoviePage ~ data", data);
   const loading = !data && !error;
   useEffect(() => {
     if (filterDebounce) {
@@ -30,8 +32,15 @@ const MoviePage = () => {
     }
   }, [filterDebounce, nextPage]);
   const movies = data?.results || [];
-  if (!data) return null;
-  const { page, total_pages } = data;
+  useEffect(() => {
+    if (!data || !data.total_results) return;
+    setPageCount(Math.ceil(data.total_results / itemsPerPage));
+  }, [data, itemOffset]);
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * itemsPerPage) % data.total_results;
+    setItemOffset(newOffset);
+    setNextPage(event.selected + 1);
+  };
   return (
     <div className="py-10 page-container">
       <div className="flex mb-10">
@@ -70,7 +79,19 @@ const MoviePage = () => {
             <MovieCard key={item.id} item={item}></MovieCard>
           ))}
       </div>
-      <div className="flex items-center justify-center mt-10 gap-x-5">
+      <div className="mt-10">
+        <ReactPaginate
+          breakLabel="..."
+          nextLabel="next >"
+          onPageChange={handlePageClick}
+          pageRangeDisplayed={5}
+          pageCount={pageCount}
+          previousLabel="< previous"
+          renderOnZeroPageCount={null}
+          className="pagination"
+        />
+      </div>
+      {/* <div className="flex items-center justify-center mt-10 gap-x-5">
         <span className="cursor-pointer">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -113,7 +134,7 @@ const MoviePage = () => {
             />
           </svg>
         </span>
-      </div>
+      </div> */}
     </div>
   );
 };

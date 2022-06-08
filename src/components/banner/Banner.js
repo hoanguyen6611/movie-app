@@ -3,6 +3,7 @@ import useSWR from "swr";
 import { fetcher } from "../../config";
 import { SwiperSlide, Swiper } from "swiper/react";
 import { useNavigate } from "react-router-dom";
+import Button from "../button/Button";
 
 const Banner = () => {
   const { data } = useSWR(
@@ -26,7 +27,7 @@ const Banner = () => {
 
 function BannerItem({ item }) {
   const { title, poster_path, id } = item;
-  console.log("🚀 ~ file: Banner.js ~ line 29 ~ BannerItem ~ item", item)
+  console.log("🚀 ~ file: Banner.js ~ line 29 ~ BannerItem ~ item", item);
   const navigate = useNavigate();
   return (
     <div className="w-full h-full rounded-lg relative">
@@ -49,9 +50,7 @@ function BannerItem({ item }) {
             Drama
           </span>
         </div>
-        <button onClick={() => navigate(`/movie/${id}`)} className="py-3 px-6 rounded-lg bg-primary text-white font-medium">
-          Watch
-        </button>
+        <Button onClick={() => navigate(`/movie/${id}`)}>Watch Now</Button>
       </div>
     </div>
   );
