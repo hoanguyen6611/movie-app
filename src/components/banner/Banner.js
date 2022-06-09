@@ -27,7 +27,6 @@ const Banner = () => {
 
 function BannerItem({ item }) {
   const { title, poster_path, id } = item;
-  console.log("🚀 ~ file: Banner.js ~ line 29 ~ BannerItem ~ item", item);
   const navigate = useNavigate();
   return (
     <div className="w-full h-full rounded-lg relative">
